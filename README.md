@@ -5,7 +5,7 @@
 
 运行环境:openwrt chaos_calmer 15.05.1 （Lenovo Y1 测试通过 ）
 
-  需安装 python3 (python3-base python3-codecs python3-email)
+     至少需要安装 python3 (python3-base python3-codecs python3-email)
               
               coreutils-nohup
          
@@ -17,3 +17,8 @@
     
     nohup python3 autologin.py &
     
+原理简介：
+
+1.模拟校园网客户端发包(HTTP POST登陆，以及 UDP 心跳包)
+
+2.通过读取/proc/net/arp 0x2  -1 获取在线人数>0 登陆
