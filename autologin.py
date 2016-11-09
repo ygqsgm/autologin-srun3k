@@ -13,7 +13,7 @@ import time
 account = '***********'
 # ***替换成学号
 baccount = b'**********'
-# 终端设备MAC地址 ipconfig /all 可查看，用有线就是有线无线就是无线网卡的MAC
+# 路由器 WAN口的MAC 地址 (ipconfig)  
 mac = b"AA:BB:CC:DD:EE:FF"
 # 你的密码
 password = '******'
