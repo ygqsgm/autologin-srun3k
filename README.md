@@ -1,4 +1,4 @@
-# autologin-srun3k
+# autologin-srun3k 运行环境
 校园网环境:河南工业大学haut.edu.cn srun3k登陆 
 
           (其它学校使用srun3K方案应该类似可能需要修改)
@@ -9,7 +9,7 @@
               
               coreutils-nohup
          
-如何使用：
+# 如何使用：
 
     下载至路由器端
     
