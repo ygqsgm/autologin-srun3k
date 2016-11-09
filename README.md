@@ -16,7 +16,7 @@
     
 修改 学号，路由器WAN口MAC，密码
 
-   VIM autologin.py
+    VIM autologin.py
 
     nohup python3 autologin.py &
     
