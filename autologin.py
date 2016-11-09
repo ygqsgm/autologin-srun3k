@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
-# 2016-11-08 21:45:01
 
 import socket
 from urllib.request import Request, urlopen
