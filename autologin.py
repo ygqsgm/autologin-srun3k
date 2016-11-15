@@ -128,7 +128,7 @@ def main():
     while True:
         lt = lt + 1
         print('Login:', lt)  # 登陆次数
-        with open('D:\Python\\arp.txt', 'r') as f:
+        with open('/proc/net/arp', 'r') as f:
             d = f.read()
         print("Online User: ", d.count("0x2") - 1)
         if status == 0:  # 如果未登录
