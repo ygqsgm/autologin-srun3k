@@ -10,12 +10,15 @@ import time
 
 # ***替换成学号
 account = '***********'
-# ***替换成学号
-baccount = b'**********'
-# 路由器 WAN口的MAC 地址 (ipconfig)  
-mac = b"AA:BB:CC:DD:EE:FF"
 # 你的密码
 password = '******'
+###以下失效####
+# ***替换成学号
+#baccount = b'**********'
+# 路由器 WAN口的MAC 地址 (ipconfig)  
+#mac = b"AA:BB:CC:DD:EE:FF"
+###分割线####
+
 
 def pswd_encrypt(passwd, key):
     pe = ""
@@ -63,23 +66,35 @@ def http_post(url, po_dict):
     except URLError as e:
         print('Invalid url :', url)
 
-def dropheart():
-    pack = struct.pack('! 12s 20x 17s 7x', baccount, mac)
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    i = 0
-    while True:
-        s.sendto(pack, ('172.16.154.130', 3338))
-        s.sendto(pack, ('172.16.154.130', 4338))
-        i = i + 1
-        print('Heartbeat', i)
-        # 此处调整心跳包发送时间间隔，单位 second
-        time.sleep(50)
-        with open('/proc/net/arp', 'r') as fh:
-                dh = fh.read()
-        if dh.count("0x2") < 2:
-            break
-            print("OFFLINE")
+#def heartbeat(): #已禁用心跳包验证
+#    pack = struct.pack('! 12s 20x 17s 7x', baccount, mac)
+#    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#    i = 0
+#    while True:
+#        s.sendto(pack, ('172.16.154.130', 3338))
+#        s.sendto(pack, ('172.16.154.130', 4338))
+#        i = i + 1
+#        print('Heartbeat', i)
+#        # 此处调整心跳包发送时间间隔，单位 second
+#        time.sleep(50)
+#        with open('/proc/net/arp', 'r') as fh:
+#                dh = fh.read()
+#        if dh.count("0x2") < 2:
+#            break
+#            print("OFFLINE")
         
+def logout():
+    po_dict = {
+        "username":username,
+        "ac_id":1,
+        "mac":'',
+        "type":2,
+        "action":'logout'
+    }
+    po_dict["username"] = "{SRUN3}\r\n" + usr_encrypt(account)
+    rs = http_post("http://172.16.154.130:69/cgi-bin/srun_portal", po_dict)
+    print(rs.decode('utf-8'))
+    
 def login():
     po_dict = {
         "action":"login",
@@ -112,8 +127,11 @@ def main():
         print("Online User: ", d.count("0x2")-1)
         if d.count("0x2") >= 2:
             login()
-            dropheart()
-        time.sleep(15) #睡眠15后继续循环
+            time.sleep(60)
+#            Heartbeat()
+        else:
+            logout()
+            time.sleep(20)#睡眠15后继续循环
 
 if __name__ == '__main__':
     main()
