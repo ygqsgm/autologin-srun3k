@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 
-import socket
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode
 from urllib.error import URLError, HTTPError
-import struct
 import time
 
 # ***替换成学号
-account = '***********'
+account = '********'
 # 你的密码
 password = '******'
+
+
 ###以下为心跳包部分，目前已经禁用####
 # ***替换成学号
-#baccount = b'**********'
-# 路由器 WAN口的MAC 地址 (ipconfig)  
-#mac = b"AA:BB:CC:DD:EE:FF"
+# baccount = b'**********'
+# 路由器 WAN口的MAC 地址 (ipconfig)
+# mac = b"AA:BB:CC:DD:EE:FF"
 ###分割线####
 
 
@@ -26,12 +26,12 @@ def pswd_encrypt(passwd, key):
         ki = ord(passwd[i]) ^ ord(key[len(key) - i % len(key) - 1])
         _l = chr((ki & 0x0f) + 0x36)
         _h = chr((ki >> 4 & 0x0f) + 0x63)
-        if(i % 2 == 0):		# reverse
+        if (i % 2 == 0):  # reverse
             pe += _l + _h
         else:
             pe += _h + _l
-
     return pe
+
 
 def usr_encrypt(username):
     res = ""
@@ -42,19 +42,20 @@ def usr_encrypt(username):
 
 def get_headers():
     return {
-        "Content-Type" : "application/x-www-form-urlencoded",
-        "User-Agent" : "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1",
         "SRun-Version": "SRun3K Client_XW117S0B60119A-SRun3K.Portal",
-        #"SRun-AuthorizationCRC32": "BD9852E5",
+        # "SRun-AuthorizationCRC32": "BD9852E5",
         "DiskDevice": "|",
         'OSName': 'Microsoft Professional (build 9200), 64-bit',
-        #'SRun-ClientTime': '1456641787',
+        # 'SRun-ClientTime': '1456641787',
         'SRun-ClientGUID': '{F7891AFF-1031-E288-175D-BF1DA46688B7}',
-        #'SRun-AuthorizationKey': 'a0445fa2c1f45b763c3547c4645a670c',
+        # 'SRun-AuthorizationKey': 'a0445fa2c1f45b763c3547c4645a670c',
         "CPUDevice": '|',
         'OSVersion': '6.2 Build9200',
-        #'SRun-AuthorizationCKey': 'FEF16E77DE959883454E02A6E4F058D2',
+        # 'SRun-AuthorizationCKey': 'FEF16E77DE959883454E02A6E4F058D2',
     }
+
 
 def http_post(url, po_dict):
     req = Request(url, urlencode(po_dict).encode('utf-8'))
@@ -66,7 +67,8 @@ def http_post(url, po_dict):
     except URLError as e:
         print('Invalid url :', url)
 
-#def heartbeat(): #已禁用心跳包验证,视学校情况决定是否开启
+
+# def heartbeat(): #已禁用心跳包验证,视学校情况决定是否开启
 #    pack = struct.pack('! 12s 20x 17s 7x', baccount, mac)
 #    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #    i = 0
@@ -82,61 +84,65 @@ def http_post(url, po_dict):
 #        if dh.count("0x2") < 2:
 #            break
 #            print("OFFLINE")
-        
+
 def logout():
     po_dict = {
-        "username":username,
-        "ac_id":1,
-        "mac":'',
-        "type":2,
-        "action":'logout'
+        "username":account,
+        "ac_id": 1,
+        "mac": '',
+        "type": 2,
+        "action": 'logout'
     }
-    po_dict["username"] = "{SRUN3}\r\n" + usr_encrypt(account)
+    #po_dict["username"] = "{SRUN3}\r\n" + usr_encrypt(account)
     rs = http_post("http://172.16.154.130:69/cgi-bin/srun_portal", po_dict)
     print(rs.decode('utf-8'))
-    
+
+
 def login():
     po_dict = {
-        "action":"login",
+        "action": "login",
         "username": "",
-        "password":"",
+        "password": "",
         "drop": 0,
-        "pop":1,
-        "type":2,
-        "n":117,
-        "mbytes":0,
-        "minutes":0,
-        "ac_id":1,
+        "pop": 1,
+        "type": 2,
+        "n": 117,
+        "mbytes": 0,
+        "minutes": 0,
+        "ac_id": 1,
     }
 
     po_dict["username"] = "{SRUN3}\r\n" + usr_encrypt(account)
-    #print(po_dict['username'])
+    # print(po_dict['username'])
     po_dict["password"] = pswd_encrypt(password, '1234567890')
-    rs = http_post("http://172.16.154.130:69/cgi-bin/srun_portal", po_dict) #'http://172.16.154.130/cgi-bin/rad_user_info', po_dict) #
+    rs = http_post("http://172.16.154.130:69/cgi-bin/srun_portal",
+                   po_dict)  # 'http://172.16.154.130/cgi-bin/rad_user_info', po_dict) #
     print(rs.decode('utf-8'))
     # print(po_dict['password'])
 
+
 def main():
     print('Running...')
-    status = 0 # 登陆状态 默认0登陆后设置
+    status = 0  # 登陆状态 默认0登陆后设置
     lt = 0
     while True:
         lt = lt + 1
-        print('Login:', lt) #登陆次数
-        with open('/proc/net/arp', 'r') as f:
+        print('Login:', lt)  # 登陆次数
+        with open('D:\Python\\arp.txt', 'r') as f:
             d = f.read()
-        print("Online User: ", d.count("0x2")-1)
-        if status == 0 : #如果未登录
-            if d.count("0x2") >= 2: #则判断->尝试登陆
+        print("Online User: ", d.count("0x2") - 1)
+        if status == 0:  # 如果未登录
+            if d.count("0x2") >= 2:  # 则判断->尝试登陆
                 login()
                 status = 1
-                time.sleep(60) #登陆成功->睡眠
-        else: #如果已经登陆则睡眠及注销判断
-                print("Already Login, Sleep 60s")
-                if (d.count("0x2") < 2): #注销判断
-                    logout()
-                    status = 0
-                time.sleep(60) 
+            time.sleep(20)  # 睡眠
+        else:  # 如果已经登陆则睡眠及注销判断
+            print("Already Login, Sleep 60s")
+            if (d.count("0x2") < 2):  # 注销判断
+                logout()
+                status = 0
+            time.sleep(100)
+
 
 if __name__ == '__main__':
     main()
