@@ -12,7 +12,7 @@ import time
 account = '***********'
 # 你的密码
 password = '******'
-###以下失效####
+###以下为心跳包部分，目前已经禁用####
 # ***替换成学号
 #baccount = b'**********'
 # 路由器 WAN口的MAC 地址 (ipconfig)  
@@ -66,7 +66,7 @@ def http_post(url, po_dict):
     except URLError as e:
         print('Invalid url :', url)
 
-#def heartbeat(): #已禁用心跳包验证
+#def heartbeat(): #已禁用心跳包验证,视学校情况决定是否开启
 #    pack = struct.pack('! 12s 20x 17s 7x', baccount, mac)
 #    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 #    i = 0
@@ -118,6 +118,7 @@ def login():
 
 def main():
     print('Running...')
+    status = 0 # 登陆状态 默认0登陆后设置
     lt = 0
     while True:
         lt = lt + 1
@@ -125,13 +126,17 @@ def main():
         with open('/proc/net/arp', 'r') as f:
             d = f.read()
         print("Online User: ", d.count("0x2")-1)
-        if d.count("0x2") >= 2:
-            login()
-            time.sleep(60)
-#            Heartbeat()
-        else:
-            logout()
-            time.sleep(20)#睡眠15后继续循环
+        if status == 0 : #如果未登录
+            if d.count("0x2") >= 2: #则判断->尝试登陆
+                login()
+                status = 1
+                time.sleep(60) #登陆成功->睡眠
+        else: #如果已经登陆则睡眠及注销判断
+                print("Already Login, Sleep 60s")
+                if (d.count("0x2") < 2): #注销判断
+                    logout()
+                    status = 0
+                time.sleep(60) 
 
 if __name__ == '__main__':
     main()
