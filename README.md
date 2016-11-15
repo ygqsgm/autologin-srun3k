@@ -14,7 +14,7 @@
 
     wget https://github.com/ygqsgm/autologin-srun3k/raw/master/autologin.py    
     
-修改 学号，路由器WAN口MAC，密码
+修改 学号，密码
 
     VIM autologin.py
 
