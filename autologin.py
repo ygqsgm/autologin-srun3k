@@ -122,26 +122,26 @@ def login():
 
 
 def main():
-    print('Running...')
+    #print('Running...')
     status = 0  # 登陆状态 默认0登陆后设置
-    lt = 0
+    #lt = 0
     while True:
-        lt = lt + 1
-        print('Login:', lt)  # 登陆次数
+        #lt = lt + 1
+        #print('Login:', lt)  # 登陆次数
         with open('/proc/net/arp', 'r') as f:
             d = f.read()
-        print("Online User: ", d.count("0x2") - 1)
+        #print("Online_Device: ", d.count("0x2") - 1)
         if status == 0:  # 如果未登录
             if d.count("0x2") >= 2:  # 则判断->尝试登陆
                 login()
                 status = 1
-            time.sleep(20)  # 睡眠
+            time.sleep(100)  # 睡眠
         else:  # 如果已经登陆则睡眠及注销判断
-            print("Already Login, Sleep 60s")
+            #print("Already Login, Sleep 60s")
             if (d.count("0x2") < 2):  # 注销判断
                 logout()
                 status = 0
-            time.sleep(100)
+            time.sleep(300)
 
 
 if __name__ == '__main__':
